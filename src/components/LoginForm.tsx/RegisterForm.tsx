@@ -19,6 +19,7 @@ const FormSchema = z.object({
 type FormData = z.infer<typeof FormSchema>;
 
 export default function RegisterForm() {
+  const [emailAlreadyExists, setEmailAlreadyExists] = useState(false);
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const {
@@ -49,7 +50,13 @@ export default function RegisterForm() {
           router.replace("/");
         },
         onError: (ctx) => {
-          console.log("Erro ao criar conta", ctx);
+          if (ctx.error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
+            setEmailAlreadyExists(true);
+
+            setTimeout(() => {
+              setEmailAlreadyExists(false);
+            }, 3000);
+          }
         },
       }
     );
@@ -85,6 +92,11 @@ export default function RegisterForm() {
       />
       {errors.email && (
         <span className="text-red-400 text-sm">{errors.email.message}</span>
+      )}
+      {emailAlreadyExists && (
+        <span className="text-red-400 text-sm mt-2">
+          Este e-mail já está em uso.
+        </span>
       )}
       <div className="relative mt-4 flex flex-col">
         <ToDoInput
