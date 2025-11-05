@@ -10,6 +10,7 @@ import { ToDoInput } from "../ToDoInput/ToDoInput";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Spinner } from "../ui/spinner";
 
 const FormSchema = z.object({
   email: z.email("Endereço de e-mail inválido."),
@@ -22,6 +23,8 @@ export default function LoginForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [invalidPassword, setInvalidPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -42,13 +45,15 @@ export default function LoginForm() {
         callbackURL: "/",
       },
       {
-        onRequest: (ctx) => {},
+        onRequest: (ctx) => {
+          setIsLoading(true);
+        },
         onSuccess: (ctx) => {
-          console.log("LOGADO ", ctx);
+          setIsLoading(false);
           router.replace("/");
         },
         onError: (ctx) => {
-          console.log("ERRO", ctx);
+          setIsLoading(false);
           if (ctx.error.code === "INVALID_EMAIL_OR_PASSWORD") {
             setInvalidPassword(true);
             toast("E-mail ou senha incorreta", {
@@ -122,7 +127,7 @@ export default function LoginForm() {
         type="submit"
         className="absolute bottom-12 left-8 right-8 flex items-center justify-center bg-gray-400 py-4 text-white font-bold cursor-pointer mt-4 hover:brightness-87 transition"
       >
-        LOGIN
+        {isLoading === true ? <Spinner className="text-white" /> : "ENTRAR"}
       </button>
       <small className="absolute bottom-6 left-20 text-gray-400 text-sm md:left-40">
         Não possui uma conta?{" "}

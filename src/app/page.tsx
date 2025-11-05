@@ -61,6 +61,7 @@ export default async function Home() {
 
         {todos.map((todo, index) => (
           <ToDoCard
+            createdAt={todo.createdAt}
             id={todo.id}
             key={index}
             objective={todo.title}

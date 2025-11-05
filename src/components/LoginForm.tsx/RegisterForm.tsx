@@ -9,6 +9,7 @@ import { ToDoInput } from "@/components/ToDoInput/ToDoInput";
 
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { Spinner } from "../ui/spinner";
 
 const FormSchema = z.object({
   name: z.string().min(3, "Você deve colocar um nome."),
@@ -22,6 +23,7 @@ export default function RegisterForm() {
   const [emailAlreadyExists, setEmailAlreadyExists] = useState(false);
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -38,18 +40,24 @@ export default function RegisterForm() {
   async function handleLoginSubmit({ name, email, password }: FormData) {
     const { data, error } = await authClient.signUp.email(
       {
-        name,
+        name: name
+          .split(" ")
+          .map((c) => c.charAt(0).toUpperCase() + c.slice(1).toLowerCase())
+          .join(" "),
         email,
         password,
         callbackURL: "/",
       },
       {
-        onRequest: () => {},
+        onRequest: () => {
+          setIsLoading(true);
+        },
         onSuccess: (ctx) => {
-          console.log("CADASTRADO", ctx);
+          setIsLoading(false);
           router.replace("/");
         },
         onError: (ctx) => {
+          setIsLoading(false);
           if (ctx.error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
             setEmailAlreadyExists(true);
 
@@ -127,7 +135,7 @@ export default function RegisterForm() {
         type="submit"
         className="absolute bottom-12 left-8 right-8 flex items-center justify-center bg-gray-400 py-4 text-white font-bold cursor-pointer mt-4 hover:brightness-87 transition"
       >
-        CADASTRAR
+        {isLoading ? <Spinner className="text-white" /> : "ENTRAR"}
       </button>
       <small className="absolute bottom-6 left-20 text-gray-400 text-sm md:left-40">
         Já possui uma conta?{" "}
