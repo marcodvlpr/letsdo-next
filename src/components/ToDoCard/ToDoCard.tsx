@@ -19,13 +19,14 @@ export default function ToDoCard({
 }: ToDoCardProps) {
   const [inputVisible, setInputVisible] = useState(false);
   const [updateText, setUpdateText] = useState("");
-  const [infoVisible, setInfoVisible] = useState(false);
+  const [checked, setChecked] = useState(completed);
 
   async function handleDelete(id: string) {
     await deleteTodos(id);
   }
 
   async function handleCompleted(id: string, completed: boolean) {
+    setChecked(!checked);
     await setCompletedTodo(id, completed);
   }
 
@@ -47,7 +48,7 @@ export default function ToDoCard({
                 <input
                   type="checkbox"
                   id={id}
-                  checked={completed}
+                  checked={checked}
                   className="relative appearance-none peer w-4 h-4 border border-green-base checked:bg-green-base "
                   onChange={() => handleCompleted(id, !completed)}
                 />
