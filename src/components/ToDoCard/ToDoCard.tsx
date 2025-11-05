@@ -27,7 +27,7 @@ export default function ToDoCard({
 
   async function handleCompleted(id: string, completed: boolean) {
     setChecked(!checked);
-    await setCompletedTodo(id, completed);
+    await setCompletedTodo(id, !checked);
   }
 
   async function handleUpdate(e: React.FormEvent<HTMLFormElement>) {
@@ -50,7 +50,7 @@ export default function ToDoCard({
                   id={id}
                   checked={checked}
                   className="relative appearance-none peer w-4 h-4 border border-green-base checked:bg-green-base "
-                  onChange={() => handleCompleted(id, !completed)}
+                  onChange={() => handleCompleted(id, !checked)}
                 />
                 <Check
                   className="absolute hidden peer-checked:block text-white"
